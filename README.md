@@ -1,3 +1,4 @@
+```
 minimodem - general-purpose software audio FSK modem
 Copyright (C) 2011-2020 Kamal Mostafa <kamal@whence.com>
 
@@ -15,6 +16,7 @@ system audio device, or in batched mode via audio files.
 Minimodem can be used to transfer data between nearby computers using an
 audio cable (or just via sound waves), or between remote computers using
 radio, telephone, or another audio communications medium.
+```
 
 ## Fork + Additions
 
