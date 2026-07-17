@@ -68,6 +68,10 @@ simpleaudio_open_stream(
 
     switch ( sa_backend ) {
 
+	case SA_BACKEND_STDIN:
+	    sa->backend = &simpleaudio_backend_stdin;
+	    break;
+
 #if USE_SNDFILE
 	case SA_BACKEND_FILE:
 	    sa->backend = &simpleaudio_backend_sndfile;

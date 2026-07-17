@@ -39,6 +39,7 @@ typedef enum {
 	SA_BACKEND_ALSA,
 	SA_BACKEND_PULSEAUDIO,
 	SA_BACKEND_SNDIO,
+	SA_BACKEND_STDIN,
 } sa_backend_t;
 
 /* sa_stream_direction */

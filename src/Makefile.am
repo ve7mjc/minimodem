@@ -36,6 +36,7 @@ SIMPLEAUDIO_SRC = \
 	simpleaudio-pulse.c	\
 	simpleaudio-alsa.c	\
 	simpleaudio-sndio.c	\
+	simpleaudio-stdin.c	\
 	simpleaudio-benchmark.c	\
 	simpleaudio-sndfile.c
 
@@ -60,4 +61,3 @@ minimodem_SOURCES = minimodem.c $(DATABITS_SRC) $(FSK_SRC) $(SIMPLEAUDIO_SRC)
 minimodem.1.html: minimodem.1 Makefile
 	man --html=cat ./minimodem.1 | sed '5,$$ s:\(http\:[^ &]*\):<A HREF="\1">\1</A>:g' > $@
 	[ -s $@ ] || { rm $@; exit 1; }
-

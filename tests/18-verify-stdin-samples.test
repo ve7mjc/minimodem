@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+tmpdir=$(mktemp -d)
+trap 'rm -rf "$tmpdir"' EXIT
+
+printf 'hello\n' > "$tmpdir/input.txt"
+
+../src/minimodem --tx --file "$tmpdir/s16le.raw" \
+	--samplerate 24000 -M 1200 -S 2400 1200 < "$tmpdir/input.txt"
+../src/minimodem --rx --stdin-samples s16le \
+	--samplerate 24000 -M 1200 -S 2400 --quiet 1200 \
+	< "$tmpdir/s16le.raw" > "$tmpdir/s16le.txt"
+diff -u "$tmpdir/input.txt" "$tmpdir/s16le.txt"
+
+../src/minimodem --tx --float-samples --file "$tmpdir/f32.raw" \
+	--samplerate 24000 -M 1200 -S 2400 1200 < "$tmpdir/input.txt"
+../src/minimodem --rx --stdin-samples f32 \
+	--samplerate 24000 -M 1200 -S 2400 --quiet 1200 \
+	< "$tmpdir/f32.raw" > "$tmpdir/f32.txt"
+diff -u "$tmpdir/input.txt" "$tmpdir/f32.txt"

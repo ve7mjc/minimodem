@@ -130,6 +130,13 @@ DWD's RTTY maritime weather report and forecast).
 .B \-f, \-\-file filename.wav
 encode or decode an audio file (extension sets audio format)
 .TP
+.B \-\-stdin-samples {s16le|f32}
+Decode raw mono samples from standard input.  The input must be headerless
+little-endian signed 16-bit PCM (s16le) or 32-bit floating-point samples (f32).
+Use
+.B \-\-samplerate
+to specify the input sample rate.  This option applies to \-\-rx mode only.
+.TP
 .B \-b, \-\-bandwidth {rx_bandwidth}
 .TP
 .B \-v, \-\-volume {tx_amplitude or 'E'}

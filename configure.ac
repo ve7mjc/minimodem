@@ -1,5 +1,5 @@
 AC_PREREQ([2.64])
-AC_INIT([minimodem], [0.24], [kamal@whence.com])
+AC_INIT([minimodem], [0.24-ve7mjc], [kamal@whence.com])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([src/Makefile.in])
 AM_INIT_AUTOMAKE

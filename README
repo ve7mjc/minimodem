@@ -16,3 +16,20 @@ Minimodem can be used to transfer data between nearby computers using an
 audio cable (or just via sound waves), or between remote computers using
 radio, telephone, or another audio communications medium.
 
+## Fork + Additions
+
+Matthew Currie 2026
+
+- Add support for reading samples from stdin; s16le or f32
+
+### Raw stdin
+
+Raw stdin receive is available with:
+
+```
+producer | minimodem --rx --stdin-samples s16le --samplerate 48000 1200
+producer | minimodem --rx --stdin-samples f32 --samplerate 48000 1200
+```
+
+Input must be mono, headerless, little-endian `s16le` or little-endian 32-bit
+float samples. Samplerate must match the producer.

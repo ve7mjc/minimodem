@@ -404,6 +404,7 @@ usage()
     "		    -5, --baudot	Baudot 5-N-1\n"
     "		    -u, --usos {0|1}\n"
     "		    -f, --file {filename.flac}\n"
+    "		    --stdin-samples {s16le|f32}\n"
     "		    -b, --bandwidth {rx_bandwidth}\n"
     "		    -v, --volume {amplitude or 'E'}\n"
     "		    -M, --mark {mark_freq}\n"
@@ -510,6 +511,7 @@ main( int argc, char*argv[] )
     int invert_start_stop = 0;
     int autodetect_shift;
     char *filename = NULL;
+    char *stdin_sample_format = NULL;
 
     float	carrier_autodetect_threshold = 0.0;
 
@@ -555,9 +557,6 @@ main( int argc, char*argv[] )
     /* validate the default system audio mechanism */
 #if !(USE_SNDIO || USE_PULSEAUDIO || USE_ALSA)
 # define _MINIMODEM_NO_SYSTEM_AUDIO
-# if !USE_SNDFILE
-#  error At least one of {USE_SNDIO,USE_PULSEAUDIO,USE_ALSA,USE_SNDFILE} must be enabled!
-# endif
 #endif
 
     program_name = strrchr(argv[0], '/');
@@ -585,7 +584,8 @@ main( int argc, char*argv[] )
 	MINIMODEM_OPT_PRINT_FILTER,
 	MINIMODEM_OPT_XRXNOISE,
 	MINIMODEM_OPT_PRINT_EOT,
-	MINIMODEM_OPT_TXCARRIER
+	MINIMODEM_OPT_TXCARRIER,
+	MINIMODEM_OPT_STDIN_SAMPLES
     };
 
     while ( 1 ) {
@@ -607,6 +607,7 @@ main( int argc, char*argv[] )
 	    { "usos",  		1, 0, 'u' },
 	    { "msb-first",	0, 0, MINIMODEM_OPT_MSBFIRST },
 	    { "file",		1, 0, 'f' },
+	    { "stdin-samples",	1, 0, MINIMODEM_OPT_STDIN_SAMPLES },
 	    { "bandwidth",	1, 0, 'b' },
 	    { "volume",		1, 0, 'v' },
 	    { "mark",		1, 0, 'M' },
@@ -663,6 +664,9 @@ main( int argc, char*argv[] )
 			break;
 	    case 'f':
 			filename = optarg;
+			break;
+	    case MINIMODEM_OPT_STDIN_SAMPLES:
+			stdin_sample_format = optarg;
 			break;
 	    case '8':
 			bfsk_n_data_bits = 8;
@@ -787,14 +791,31 @@ main( int argc, char*argv[] )
     if ( TX_mode == 0 )
 	sample_format = SA_SAMPLE_FORMAT_FLOAT;
 
-    if ( filename ) {
+    if ( stdin_sample_format && filename ) {
+	fprintf(stderr, "E: --stdin-samples and --file cannot be used together.\n");
+	exit(1);
+    }
+
+    if ( stdin_sample_format && TX_mode ) {
+	fprintf(stderr, "E: --stdin-samples applies to --rx mode only.\n");
+	exit(1);
+    }
+
+    if ( stdin_sample_format ) {
+	sa_backend = SA_BACKEND_STDIN;
+	sa_backend_device = stdin_sample_format;
+    } else if ( filename ) {
 #if !USE_SNDFILE
 	fprintf(stderr, "E: This build of minimodem was configured without sndfile,\nE:   so the --file flag is not supported.\n");
 	exit(1);
 #endif
     } else {
 #ifdef _MINIMODEM_NO_SYSTEM_AUDIO
-	fprintf(stderr, "E: this build of minimodem was configured without system audio support,\nE:   so only the --file mode is supported.\n");
+#if USE_SNDFILE
+	fprintf(stderr, "E: this build of minimodem was configured without system audio support,\nE:   so only --file or --stdin-samples modes are supported.\n");
+#else
+	fprintf(stderr, "E: this build of minimodem was configured without system audio or sndfile support,\nE:   so only --stdin-samples mode is supported.\n");
+#endif
 	exit(1);
 #endif
     }
@@ -969,6 +990,8 @@ main( int argc, char*argv[] )
     if ( filename ) {
 	sa_backend = SA_BACKEND_FILE;
 	stream_name = filename;
+    } else if ( stdin_sample_format ) {
+	stream_name = "stdin samples";
     }
 
     /*
