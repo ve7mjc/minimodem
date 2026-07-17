@@ -18,7 +18,7 @@ audio cable (or just via sound waves), or between remote computers using
 radio, telephone, or another audio communications medium.
 ```
 
-## Fork + Additions
+## Fork with additions
 
 Matthew Currie 2026
 
